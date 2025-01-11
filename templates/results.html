@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Similar Image Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .result-item {
+            text-align: center;
+            margin: 10px;
+            width: 180px;
+        }
+
+        .result-item img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .similarity-score {
+            font-size: 12px;
+            color: gray;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .pagination button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Similar Image Results</h1>
+
+    <div class="results-container">
+        {% for image_path, data in output_images.items() %}
+            <div class="result-item">
+                <h3>Original: {{ image_path }}</h3>
+                <img src="{{ url_for('download_file', filename=data['image_path']) }}" alt="Similar Image">
+                <br>
+                </div>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        <!-- Pagination controls (implement pagination if needed) -->
+        <button>Previous</button>
+        <button>Next</button>
+    </div>
+</body>
+</html>
