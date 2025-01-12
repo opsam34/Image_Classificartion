@@ -3,88 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Similar Image Results</title>
+    <title>Image Gallery</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
         }
 
         h1 {
-            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
         }
 
-        .results-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        .result-item {
-            text-align: center;
-            margin: 10px;
-            width: 180px;
-        }
-
-        .result-item img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-        }
-
-        .similarity-score {
-            font-size: 12px;
-            color: gray;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .pagination button {
-            padding: 8px 12px;
-            margin: 0 5px;
-            border: 1px solid #ccc;
+        #fileInput {
+            margin-bottom: 30px;
+            padding: 10px;
+            font-size: 16px;
             cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
 
-        .pagination button:hover {
-            background-color: #f0f0f0;
+        #fileInput:hover {
+            background-color: #45a049;
         }
 
-        .download-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: #4CAF50;
-            text-decoration: none;
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Automatically adjusts to screen size */
+            gap: 20px;
+            justify-items: center;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1200px; /* Set a maximum width for the gallery */
         }
 
-        .download-link:hover {
-            text-decoration: underline;
+        .image-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 220px;
+            width: 100%;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .image-item p {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            margin: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
     </style>
 </head>
 <body>
-    <h1>Similar Image Results</h1>
 
-    <div class="results-container">
-        {% for image_path, data in output_images.items() %}
-            <div class="result-item">
-                <h3>Original: {{ image_path }}</h3>
-                <img src="{{ url_for('download_file', filename=data['image_path']) }}" alt="Similar Image">
-                <br>
-                </div>
-        {% endfor %}
-    </div>
+    <h1>For result, add or select the folder</h1>
+    <input type="file" id="fileInput" multiple webkitdirectory>
+    <div class="image-gallery" id="gallery"></div>
 
-    <div class="pagination">
-        <!-- Pagination controls (implement pagination if needed) -->
-        <button>Previous</button>
-        <button>Next</button>
-    </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const gallery = document.getElementById('gallery');
+
+        fileInput.addEventListener('change', function(event) {
+            const files = event.target.files;
+            gallery.innerHTML = ''; // Clear previous images
+            
+            let imageCount = 1; // Counter for image names (image1, image2, etc.)
+            
+            Array.from(files).forEach(file => {
+                // Check if the file is an image
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = e.target.result; // Image data URL
+                        const imageName = document.createElement('p');
+                        imageName.textContent = `image${imageCount++}`; // Display image name as image1, image2, etc.
+                        const imageItem = document.createElement('div');
+                        imageItem.classList.add('image-item');
+                        imageItem.appendChild(imgElement);
+                        imageItem.appendChild(imageName);
+                        gallery.appendChild(imageItem);
+                    };
+                    reader.readAsDataURL(file); // Convert file to a data URL
+                }
+            });
+        });
+    </script>
 </body>
 </html>
